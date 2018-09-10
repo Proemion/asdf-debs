@@ -6,5 +6,17 @@ NOTE: will prompt for password to install packages with sudo apt-get.
 
 EOF
 
-sudo apt-get update
-sudo apt-get install -y task-spooler moreutils coreutils
+# add nodesource repo if it's missing since we need npm as node_module not as binary as debian/ubuntu does it, so we can update it.
+if grep -q -c "8.x" /etc/apt/sources.list.d/nodesource.list
+then
+    # otherwise update 
+    sudo apt-get update
+else
+    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+fi
+
+# install packages
+sudo apt-get install -y task-spooler moreutils coreutils nodejs
+
+# we need `npm ci` so we install 5.10.0
+sudo npm i -g npm@5.10.0 -q
